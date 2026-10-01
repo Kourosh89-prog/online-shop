@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mini shop</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+
+    <header>
+        <h1>فروشگاه من</h1>
+        <button id="cart-btn"> سبد خرید (<span id="cart-count">0</span>)</button>
+    </header>
+
+    <main>
+        <div id="product-grid" class="product-grid">
+
+        </div>
+    </main>
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <button id="modal-close" class="modal-close">X</button>
+            <img id="modal-img" src="" alt="" />
+            <h2 id="modal-name"></h2>
+            <p id="modal-price" class="price"></p>
+            <div id="modal-specs"></div>
+        </div>
+    </div>
+    <div id="cart-view" class="cart-view hidden">
+        <div class="cart-content">
+            <button id="cart-close" class="modal-close">X</button>
+            <h2>سبد خرید</h2>
+            <div id="cart-items"></div>
+            <div id="cart-total"></div>
+        </div>
+    </div>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
