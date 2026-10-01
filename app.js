@@ -1,4 +1,6 @@
 const grid = document.getElementById("product-grid");
+const checkoutBtn = document.getElementById("checkout-btn");
+checkoutBtn.addEventListener("click", openOrderModal);
 
 function renderProducts() {
     const html = products.map(product => `
@@ -110,11 +112,14 @@ function closeCartView() {
 function renderCartView() {
 
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const cartViewHtml = cart.length === 0
-        ? '<h4 class="cart-empty">سبد خرید خالی است </h4>'
-        : cart.map(item => {
+    let cartViewHtml = "";
+    if (cart.length === 0) {
+        cartViewHtml = '<h4 class="cart-empty">سبد خرید خالی است </h4>';
+    }
+    else {
+        cartViewHtml = cart.map(item => {
             const product = products.find(p => p.id === item.id);
-                return `<div class="cart-row" data-id="${product.id}">
+            return `<div class="cart-row" data-id="${product.id}">
                 <img src="${product.image}" alt="${product.name}">
                 <div class="cart-row-info">
                 <h4> ${product.name}</h4>
@@ -131,7 +136,7 @@ function renderCartView() {
                 <button class="delete-item">X</button>
                 </div>`;
         }).join("");
-    
+    }
     const total = cart.reduce((sum, item) => {
         const product = products.find(p => p.id === item.id);
         return sum + (product.price * item.quantity);
@@ -140,7 +145,11 @@ function renderCartView() {
     document.getElementById("cart-total").textContent =
         "جمع کل: " + total.toLocaleString("fa-IR") + " تومان";
     cartItemShow.innerHTML = cartViewHtml;
+    
+    checkoutBtn.disabled = cart.length === 0;
 }
+
+
 cartItemShow.addEventListener("click", (event) => {
     const row = event.target.closest(".cart-row");
     if (!row) return;
@@ -181,3 +190,38 @@ function removeFromCart(id) {
     renderCartView();
     renderCartCount();
 }
+
+
+function openOrderModal(e) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const total = cart.reduce((sum, item) => {
+        const product = products.find(p => p.id === item.id);
+        return sum + (product.price * item.quantity);
+    }, 0);
+    const orderId = Math.floor(1000 + Math.random() * 9000);
+
+    document.getElementById("order-id").textContent = "شماره سفارش" + orderId;
+    document.getElementById("order-total").textContent =
+        "مبلغ کل" + total.toLocaleString("fa-IR") + "تومان";
+
+    const orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    orders.push({
+        id: orderId,
+        total: total,
+        items: [...cart],             
+        date: new Date().toISOString()
+    });
+
+    localStorage.setItem("orders", JSON.stringify(orders));
+    localStorage.removeItem("cart");
+    renderCartCount();
+    renderCartView();
+
+    document.getElementById("order-modal").classList.remove("hidden");
+
+}
+document.getElementById("order-close").addEventListener("click", () => {
+    document.getElementById("order-modal").classList.add("hidden");
+    closeCartView();
+});

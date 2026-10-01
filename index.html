@@ -33,7 +33,19 @@
             <h2>سبد خرید</h2>
             <div id="cart-items"></div>
             <div id="cart-total"></div>
+            <div class="cart-checkout">
+                <button id="checkout-btn" class="checkout-btn">ثبت سفارش</button>
+            </div>
         </div>
+    </div>
+    <div id="order-modal" class="modal hidden">
+        <div class="modal-content order-content">
+            <div class="order-check">✅</div>
+            <h2>سفارش شما ثبت شد</h2>
+            <p id="order-id"></p>
+            <p id="order-total"></p>
+            <button id="order-close" class="checkout-btn">بستن</button>
+        </div> 
     </div>
     <script src="data.js"></script>
     <script src="app.js"></script>
