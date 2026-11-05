@@ -2,14 +2,21 @@ import ProductGrid from "./ProductGrid.jsx";
 import ProductCard from "./ProductCard.jsx";
 import ProductModal from "./ProductModal.jsx";
 import CartView from "./CartView.jsx";
-import {useState} from "react";
+import OrderModal from "./OrderModal.jsx"
+import {useState,useEffect} from "react";
 import {products} from "./data.js";
 import "./style.css";
 
 export default function App(){
   const [selectedProduct,setSelectedProduct] = useState(null);
-  const [cart,setCart ] = useState([]);
+  const [cart,setCart ] = useState(() => JSON.parse(localStorage.getItem("cart")) || []);
   const [isCartOpen,setIsCartOpen] = useState(false);
+  const [isOrderOpen,setIsOrderOpen] = useState(false);
+  const [orders,setOrders] = useState(() => JSON.parse(localStorage.getItem("orders")) || []);
+  const [currentOrder,setCurrentOrder] = useState(null);
+  useEffect(()=> {
+    localStorage.setItem("cart",JSON.stringify(cart));
+  },[cart]);
   function handleSelectProduct(productId) {
     const product = products.find(p => p.id === Number(productId));
     setSelectedProduct(product);
@@ -45,7 +52,26 @@ export default function App(){
     setCart(prev => prev.filter(item => item.id !== id));
   }
 
+  function handleSetOrder(newOrders) {
+        setOrders(newOrders);
+        localStorage.setItem("orders",JSON.stringify(orders));
+    }
 
+  function handleCheckout() {
+      const total = cart.reduce((sum,item) => {
+    const product = products.find(p=>p.id === item.id)
+    return sum + (product.price * item.quantity);
+    }
+    ,0);
+    const orderId = Math.floor(1000 + Math.random() * 9000);
+    const newOrder = {id:orderId,total:total,items:[...cart],date: new Date().toISOString()};
+  
+  setOrders(prev => [...prev, newOrder]);
+  setCart([]);
+  setIsCartOpen(false);
+  setIsOrderOpen(true);
+  setCurrentOrder(newOrder);
+  }
   return (
   <>
   <header>
@@ -60,7 +86,17 @@ export default function App(){
     onClose={() => setIsCartOpen(false)}
     onIncrease={increaseQuantity}
     onDecrease={decreaseQuantity}
-    onRemove={removeItem}/>
+    onRemove={removeItem}
+    onCheckout={handleCheckout}/>
+  )}
+  {isOrderOpen && currentOrder && (
+    <OrderModal 
+    order={currentOrder}
+    onClose={() => {
+      setIsOrderOpen(false);
+      setCurrentOrder(null);
+    }}
+    />
   )}
   </>
   )

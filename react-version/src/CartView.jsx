@@ -1,32 +1,43 @@
-import {products} from "./data.js";
+import { products } from "./data.js";
 
-export default function CartView({cart,onClose,onIncrease,onDecrease,onRemove}){
-    function handleBackdropClick(e){
-        if (e.target===e.currentTarget) onClose();
-    }
-        if(cart.length===0){
-            return(
-                <div className="cart-view" onClick={handleBackdropClick}>
-                <div className="cart-content">
-                    <button id="cart-close" className="modal-close" onClick={onClose}>X</button>
-                <h4 className="cart-empty">سبد خرید خالی است</h4>
-                </div>
-                </div>
-            )
-        }
-        const total= cart.reduce((sum,item)=>{
-            const product = products.find(p=> p.id ===item.id);
-            return sum + product.price * item.quantity;
-        },0);
-            
-            return(
-                <div id="cart-view" className="cart-view" onClick={handleBackdropClick}>
-                    <div className="cart-content">
-                        <button id="cart-close" className="modal-close" onClick={onClose}>X</button>
-                        <h2>سبد حرید</h2>
-                        <div id="cart-items">
-                {cart.map(item => {
-            const product = products.find(p => p.id === item.id);
+export default function CartView({
+  cart,
+  onClose,
+  onIncrease,
+  onDecrease,
+  onRemove,
+  onCheckout,
+}) {
+  function handleBackdropClick(e) {
+    if (e.target === e.currentTarget) onClose();
+  }
+  if (cart.length === 0) {
+    return (
+      <div className="cart-view" onClick={handleBackdropClick}>
+        <div className="cart-content">
+          <button id="cart-close" className="modal-close" onClick={onClose}>
+            X
+          </button>
+          <h4 className="cart-empty">سبد خرید خالی است</h4>
+        </div>
+      </div>
+    );
+  }
+  const total = cart.reduce((sum, item) => {
+    const product = products.find((p) => p.id === item.id);
+    return sum + product.price * item.quantity;
+  }, 0);
+
+  return (
+    <div id="cart-view" className="cart-view" onClick={handleBackdropClick}>
+      <div className="cart-content">
+        <button id="cart-close" className="modal-close" onClick={onClose}>
+          X
+        </button>
+        <h2>سبد خرید</h2>
+        <div id="cart-items">
+          {cart.map((item) => {
+            const product = products.find((p) => p.id === item.id);
             return (
               <div className="cart-row" key={item.id}>
                 <img src={`/${product.image}`} alt={product.name} />
@@ -37,29 +48,41 @@ export default function CartView({cart,onClose,onIncrease,onDecrease,onRemove}){
                   </p>
                 </div>
                 <div className="cart-row-controls">
-                  <button className="increment-quantity" onClick={() => onIncrease(item.id)}>+</button>
+                  <button
+                    className="increment-quantity"
+                    onClick={() => onIncrease(item.id)}
+                  >
+                    +
+                  </button>
                   <span className="qty">{item.quantity}</span>
-                  <button className="decrement-quantity" onClick={() => onDecrease(item.id)}>−</button>
+                  <button
+                    className="decrement-quantity"
+                    onClick={() => onDecrease(item.id)}
+                  >
+                    −
+                  </button>
                 </div>
                 <div className="cart-row-total">
                   {(product.price * item.quantity).toLocaleString("fa-IR")}
                 </div>
-                <button className="delete-item" onClick={() => onRemove(item.id)}>X</button>
+                <button
+                  className="delete-item"
+                  onClick={() => onRemove(item.id)}
+                >
+                  X
+                </button>
               </div>
             );
           })}
         </div>
 
-        <div id="cart-total">
-          جمع کل: {total.toLocaleString("fa-IR")} تومان
+        <div id="cart-total">جمع کل: {total.toLocaleString("fa-IR")} تومان</div>
+        <div className="cart-checkout">
+          <button className="checkout-btn" onClick={onCheckout}>
+            ثبت سفارش
+          </button>
         </div>
       </div>
     </div>
   );
 }
-                        
-                            
-                            
-                                              
-
-    
